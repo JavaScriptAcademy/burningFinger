@@ -1,0 +1,11 @@
+html {
+}
+
+
+input[type=text].word{
+  font-size: 30px;
+}
+
+#active{
+  background-color: lightgreen;
+}
