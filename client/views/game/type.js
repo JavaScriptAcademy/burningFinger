@@ -43,7 +43,7 @@ Template.type.events({
     checkCorrect(inputWord, activeWord);
 
     if(event.keyCode === 32){
-      if(checkCompleteAWord(inputWord, activeWord)){
+      if(checkCompleteAWord(inputWord.trim(), activeWord)){
         activeWord = getActiveWord(indexOfWord, restWords);
         indexOfWord < restWords.length - 1 ? indexOfWord ++ : 0;
         $('#passed').html(passedWords.join(' '));
@@ -62,19 +62,19 @@ Template.type.events({
 });
 
 function checkCompleteAWord(inputWord, activeWord){
-  if((inputWord.length -1) !== activeWord.length){
+  if(inputWord.length === activeWord.length &&
+    checkCorrect(inputWord, activeWord)){
+    return true;
+  }else{
     changeBackColor(false);
     return false;
-  }else{
-    checkCorrect(inputWord, activeWord);
-    return true;
   }
 }
 
 function checkCorrect(inputWord, activeWord){
   let isCorrect = isCorrectWord(inputWord, activeWord);
-
   changeBackColor(isCorrect);
+  return isCorrect;
 
 }
 
@@ -85,7 +85,7 @@ function isCorrectWord(inputWord, currentWord){
   for(let index = 0; index < inputWordArray.length; index ++){
     let result = (inputWordArray[index] === activeWordArray[index]);
     if(!result){
-      return false
+      return false;
     }
   }
   return true;
