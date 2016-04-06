@@ -7,5 +7,7 @@
 
 <template name="action">
   <button class="btn">quit</button>
-  <button class="btn">start</button>
+  {{#if currentUser}}
+    <button class="btn">start</button>
+  {{/if}}
 </template>

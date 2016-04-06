@@ -1,44 +1,47 @@
-import { Template } from 'meteor/templating';
-import { Meteor }  from 'meteor/meteor';
-
-import './type.html';
-
 let passedWords = [], restWords = [], indexOfWord = 1;
 let activeWord = '', indexOfInputWord = 0;
 
-Template.type.onCreated( () => {
-  Meteor.subscribe('randomtext');
-  Meteor.subscribe('rooms');
+Template.type.onCreated( function typeOnCreated() {
+  // Meteor.subscribe('randomtext');
+  Meteor.subscribe('getAllRooms');
   $('#wordTypingField').focus();
 
 });
 
 Template.type.helpers({
-  randomText(){
-    return getRandomText();
+  text(){
+    let wholeTextObj = getRoomById(this._id);
+    let text = wholeTextObj && wholeTextObj.text;
+    return text;
   },
   passedWords(){
     return '';
   },
   activeWord(){
-    let wholeTextObj = getRandomText();
-    let restWords = wholeTextObj.text.split(' ');
-    passedWords.push(restWords[0]);
-    activeWord = restWords[0];
-    return activeWord;
+    let wholeTextObj = getRoomById(this._id);
+    if(wholeTextObj){
+      let restWords = wholeTextObj.text && wholeTextObj.text.split(' ');
+      activeWord = restWords[0];
+      passedWords.push(activeWord);
+      return activeWord;
+    }
+    return '';
   },
   restWords(){
-    let wholeTextObj = getRandomText();
-    let restWords = wholeTextObj.text.split(' ');
-    return restWords.slice(1, restWords.length).join(' ');
+    let wholeTextObj = getRoomById(this._id);
+    if(wholeTextObj){
+      let restWords = wholeTextObj.text && wholeTextObj.text.split(' ');
+      return restWords.slice(1, restWords.length).join(' ');
+    }
+    return '';
   }
 });
 
 Template.type.events({
   'keyup #wordTypingField'(event){
-    let wholeTextObj = getRandomText();
-    let restWords = wholeTextObj.text.split(' ');
     let inputWord = event.target.value;
+    let wholeTextObj = getRoomById(this._id);
+    let restWords = wholeTextObj && wholeTextObj.text && wholeTextObj.text.split(' ');
 
     checkCorrect(inputWord, activeWord);
 
@@ -65,10 +68,10 @@ function checkCompleteAWord(inputWord, activeWord){
   if(inputWord.length === activeWord.length &&
     checkCorrect(inputWord, activeWord)){
     return true;
-  }else{
-    changeBackColor(false);
-    return false;
-  }
+}else{
+  changeBackColor(false);
+  return false;
+}
 }
 
 function checkCorrect(inputWord, activeWord){
@@ -99,8 +102,8 @@ function changeBackColor(isPassed){
   }
 }
 
-function getRandomText(){
-  return Texts.findOne();
+function getRoomById(id){
+  return Rooms.findOne({_id:id});
 }
 
 function getActiveWord(indexOfWord, restWords){
