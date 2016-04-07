@@ -1,19 +1,13 @@
-let passedWords = [], restWords = [], indexOfWord = 1;
-let activeWord = '', indexOfInputWord = 0, allPlayers = [];
+let passedWords = [], restWords = [], indexOfWord = 1,wholeTextObj = [];
+let activeWord = '', indexOfInputWord = 0, allPlayers = [], activeIndex= 0;
+let  _ = lodash;
 
 Template.type.onCreated( function typeOnCreated() {
-  // Meteor.subscribe('randomtext');
   Meteor.subscribe('getAllRooms');
   $('#wordTypingField').focus();
-
 });
 
 Template.type.helpers({
-  text(){
-    let wholeTextObj = getRoomById(this._id);
-    let text = wholeTextObj && wholeTextObj.text;
-    return text;
-  },
   passedWords(){
     return '';
   },
@@ -21,9 +15,9 @@ Template.type.helpers({
     let wholeTextObj = getRoomById(this._id);
     if(wholeTextObj){
       let restWords = wholeTextObj.text && wholeTextObj.text.split(' ');
-      activeWord = restWords[0];
-      passedWords.push(activeWord);
-      return activeWord;
+      console.log('active word from helper', restWords[0]);
+      passedWords.push(restWords[activeIndex]);
+      return restWords[activeIndex];
     }
     return '';
   },
@@ -38,7 +32,8 @@ Template.type.helpers({
   allPlayer(){
     let wholeRoomObj = getRoomById(this._id);
     allPlayers = wholeRoomObj && wholeRoomObj.members;
-      return allPlayers;
+    _.reverse(_.sortBy(allPlayers, function(o) { return o.progress; }));
+    return allPlayers;
   }
 
 });
@@ -49,23 +44,25 @@ Template.type.events({
     let wholeTextObj = getRoomById(this._id);
     let restWords = wholeTextObj && wholeTextObj.text && wholeTextObj.text.split(' ');
 
-    checkCorrect(inputWord, activeWord);
+    checkCorrect(inputWord, restWords[activeIndex]);
 
     if(event.keyCode === 32){
-      if(checkCompleteAWord(inputWord.trim(), activeWord)){
+      if(checkCompleteAWord(inputWord.trim(), restWords[activeIndex])){
         activeWord = getActiveWord(indexOfWord, restWords);
         console.log('get active word:',activeWord);
         indexOfWord < restWords.length - 1 ? indexOfWord ++ : 0;
         $('#passed').html(passedWords.join(' '));
-        passedWords.push(activeWord);
+        // passedWords.push(activeWord);
         $('#active').html(activeWord);
         $('#active').css('background-color','lightgreen')
-        $('#rest').html(restWords.slice(passedWords.length, restWords.length).join(' '));
+        $('#rest').html(restWords.slice((passedWords.length + 1), restWords.length).join(' '));
 
         let wordsCounts = passedWords.length;
         let progress = (wordsCounts / restWords.length) * 100;
         progress = parseFloat(Math.round(progress * 100) / 100).toFixed(2);
-        // Meteor.call('member.update',progress, Meteor.userId(), this._id);
+        Meteor.call('member.update',progress, Meteor.userId(), this._id);
+        console.log(activeIndex,'events');
+        activeIndex++;
         $('#wordTypingField').val('');
       }
     }
@@ -86,9 +83,9 @@ function checkCompleteAWord(inputWord, activeWord){
 }
 }
 
-function checkCorrect(inputWord, activeWord){
-  console.log('checkCorrect: ', activeWord);
-  let isCorrect = isCorrectWord(inputWord, activeWord);
+function checkCorrect(inputWord, WordToCompare){
+  console.log('checkCorrect: ', WordToCompare);
+  let isCorrect = isCorrectWord(inputWord, WordToCompare);
   changeBackColor(isCorrect);
   return isCorrect;
 

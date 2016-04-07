@@ -23,7 +23,7 @@ Meteor.methods({
     }
     roomMembers.push(member);
 
-    let text = HTTP.call('GET',"http://www.randomtext.me/api/gibberish/p-1/95-105");
+    let text = HTTP.call('GET',"http://www.randomtext.me/api/gibberish/p-1/30-45");
 
     let string =text.data.text_out.replace("<p>", "").replace("</p>", "");
     let id = Rooms.insert({
