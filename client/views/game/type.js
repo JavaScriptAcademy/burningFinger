@@ -1,5 +1,5 @@
 let passedWords = [], restWords = [], indexOfWord = 1;
-let activeWord = '', indexOfInputWord = 0;
+let activeWord = '', indexOfInputWord = 0, allPlayers = [];
 
 Template.type.onCreated( function typeOnCreated() {
   // Meteor.subscribe('randomtext');
@@ -34,7 +34,13 @@ Template.type.helpers({
       return restWords.slice(1, restWords.length).join(' ');
     }
     return '';
+  },
+  allPlayer(){
+    let wholeRoomObj = getRoomById(this._id);
+    allPlayers = wholeRoomObj && wholeRoomObj.members;
+      return allPlayers;
   }
+
 });
 
 Template.type.events({
@@ -48,12 +54,18 @@ Template.type.events({
     if(event.keyCode === 32){
       if(checkCompleteAWord(inputWord.trim(), activeWord)){
         activeWord = getActiveWord(indexOfWord, restWords);
+        console.log('get active word:',activeWord);
         indexOfWord < restWords.length - 1 ? indexOfWord ++ : 0;
         $('#passed').html(passedWords.join(' '));
         passedWords.push(activeWord);
         $('#active').html(activeWord);
         $('#active').css('background-color','lightgreen')
         $('#rest').html(restWords.slice(passedWords.length, restWords.length).join(' '));
+
+        let wordsCounts = passedWords.length;
+        let progress = (wordsCounts / restWords.length) * 100;
+        progress = parseFloat(Math.round(progress * 100) / 100).toFixed(2);
+        // Meteor.call('member.update',progress, Meteor.userId(), this._id);
         $('#wordTypingField').val('');
       }
     }
@@ -75,6 +87,7 @@ function checkCompleteAWord(inputWord, activeWord){
 }
 
 function checkCorrect(inputWord, activeWord){
+  console.log('checkCorrect: ', activeWord);
   let isCorrect = isCorrectWord(inputWord, activeWord);
   changeBackColor(isCorrect);
   return isCorrect;

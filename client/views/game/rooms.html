@@ -1,11 +1,14 @@
 <template name="rooms">
   <div class="row roomList">
   {{#each allRooms}}
-    <div class="col s12 m4">
-      <div class="card-panel teal hoverable center-align">
-        <p class="white-text">{{name}}</p>
-      </div>
-    </div>
+    <!-- <div class="col s12 m4">
+      <a href="/game/rooms/{{_id}}">
+        <div class="card-panel teal hoverable center-align">
+          <p class="white-text">{{name}}</p>
+        </div>
+      </a>
+    </div> -->
+    {{> room}}
   {{/each}}
 
     <div class="col s12 m4" id="showNewRoomForm">
@@ -36,4 +39,14 @@
       </div>
     </form>
   </div>
+</template>
+
+<template name="room">
+  <div class="col s12 m4">
+      <!-- <a href="/game/rooms/{{_id}}"> -->
+        <div class="card-panel teal hoverable center-align room" id="{{_id}}">
+          <p class="white-text">{{name}}</p>
+        </div>
+      <!-- </a> -->
+    </div>
 </template>

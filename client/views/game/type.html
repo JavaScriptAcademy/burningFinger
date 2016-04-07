@@ -1,4 +1,14 @@
 <template name="type">
+  <div class="row flow-text">
+    {{#each allPlayer}}
+    <div class="col s6 m3">
+      <div class="card-panel teal">
+        <span class="card-title">{{progress}}%</span>
+        {{username}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
   <div class="flow-text card-panel hoverable" id="text">
 
   <!-- {{text}} -->
@@ -8,5 +18,9 @@
   </div>
   <input type="text" class="word" id="wordTypingField" autofocus />
 
+
+</template>
+
+<template name="progress">
 
 </template>

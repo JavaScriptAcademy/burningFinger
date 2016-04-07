@@ -1,11 +1,14 @@
-import { Template } from 'meteor/templating';
+Template.action.onCreated( function actionOnCreated() {
+  Meteor.subscribe('getAllRooms');
 
-import './game.html';
-import './type.js';
+});
 
-// Template.game.events({
-//   'keyup input'(event, instance){
-//      var paragraph = event.currentTarget; // always a P
-//      var value = event.target.value;
-//    }
-//  });
+Template.action.helpers({
+  isOwner() {
+    let roomObj = Rooms.findOne({_id:this._id});
+    if(roomObj){
+      return roomObj.owner === Meteor.userId();
+    }
+    return false;
+  },
+});

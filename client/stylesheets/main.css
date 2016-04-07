@@ -1,6 +1,7 @@
 html {
 }
 
+.liquidFillGaugeText { font-family: Helvetica; font-weight: bold; }
 
 input[type=text].word{
   font-size: 30px;

@@ -26,7 +26,6 @@ Template.rooms.events({
     // Insert a task into the collection
     Meteor.call('rooms.insert', name, (err, result)=>{
       if(!err){
-        console.dir(result);
        Router.go('gameRoom', { _id: result });
      }else{
        console.log(err.reason);
@@ -38,4 +37,13 @@ Template.rooms.events({
     target[0].value = '';
 
   }
+});
+
+Template.room.events({
+  'click .room'(event, instance) {
+    const roomId = event.currentTarget.id;
+    Meteor.call('rooms.update', roomId, Meteor.user(), (err, result)=>{
+      Router.go('gameRoom', { _id: roomId });
+    });
+  },
 })
