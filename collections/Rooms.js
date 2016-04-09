@@ -4,8 +4,9 @@ Rooms = new Mongo.Collection('rooms');
 // Schemas.Room = new SimpleSchema({
 //   name:{ type:String },
 //   text: { type: String },
-//   members:  { type: [ Object ]  },
-//   owner:{ type: String}
+//   members:  { type: [ Object ] , blackbox:true },
+//   owner:{ type: String},
+//   isStarting:{type: Boolean }
 // });
 
 // Rooms.attachSchema(Schemas.Room);

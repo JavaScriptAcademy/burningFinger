@@ -1,19 +1,12 @@
 <template name="rooms">
   <div class="row roomList">
-  {{#each allRooms}}
-    <!-- <div class="col s12 m4">
-      <a href="/game/rooms/{{_id}}">
-        <div class="card-panel teal hoverable center-align">
-          <p class="white-text">{{name}}</p>
-        </div>
-      </a>
-    </div> -->
-    {{> room}}
-  {{/each}}
+    {{#each allRooms}}
+      {{> room}}
+    {{/each}}
 
     <div class="col s12 m4" id="showNewRoomForm">
       <div class="card-panel teal hoverable center-align">
-          <i class="material-icons large">playlist_add</i>
+        <i class="material-icons large">playlist_add</i>
       </div>
     </div>
 
@@ -34,7 +27,7 @@
       </div>
       <div class="row">
         <div class="input-field col s6">
-            <button class="btn">Create</button>
+          <button class="btn">Create</button>
         </div>
       </div>
     </form>
@@ -43,10 +36,14 @@
 
 <template name="room">
   <div class="col s12 m4">
-      <!-- <a href="/game/rooms/{{_id}}"> -->
-        <div class="card-panel teal hoverable center-align room" id="{{_id}}">
-          <p class="white-text">{{name}}</p>
-        </div>
-      <!-- </a> -->
-    </div>
+    {{#if isStarting}}
+      <div class="card-panel red accent-1 center-align room" id="{{_id}}">
+        <p class="white-text">{{name}}</p>
+      </div>
+    {{else}}
+      <div class="card-panel teal hoverable center-align room" id="{{_id}}">
+        <p class="white-text">{{name}}</p>
+      </div>
+    {{/if}}}}
+  </div>
 </template>

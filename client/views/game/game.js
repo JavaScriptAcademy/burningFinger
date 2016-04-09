@@ -1,6 +1,5 @@
 Template.action.onCreated( function actionOnCreated() {
   Meteor.subscribe('getAllRooms');
-
 });
 
 Template.action.helpers({
@@ -12,3 +11,14 @@ Template.action.helpers({
     return false;
   },
 });
+
+Template.action.events({
+  'click #quitBtn'(event){
+    Meteor.call('member.remove',this._id,()=>{
+      Router.go('rooms');
+    })
+  },
+  'click #startBtn'(){
+    Meteor.call('room.updateStatus',this._id);
+  }
+})

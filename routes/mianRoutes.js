@@ -2,15 +2,23 @@ Router.configure({
   layoutTemplate: 'layout'
 });
 
-Router.route('/game/rooms/:_id', {
+Router.route('/rooms/:_id', {
   name:'gameRoom',
   template:'game',
-  data:function(){
-    // return Rooms.find({_id:this.params._id}).fetch()[0];
+  onBeforeAction: function(){
+    var currentUser = Meteor.userId();
+    if(currentUser){
+      this.next();
+    } else {
+     Router.go('rooms');
+   }
+ },
+  data: function(){
     return {_id:this.params._id};
-  }
+  },
 });
 
-Router.route('/game/rooms', {
+Router.route('/rooms', {
+  name:'rooms',
   template:'rooms'
 });

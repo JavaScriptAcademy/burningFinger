@@ -1,5 +1,5 @@
 let passedWords = [], restWords = [], indexOfWord = 1,wholeTextObj = [];
-let activeWord = '', indexOfInputWord = 0, allPlayers = [], activeIndex= 0;
+let activeWord = '', activeIndex= 0;
 let  _ = lodash;
 
 Template.type.onCreated( function typeOnCreated() {
@@ -15,8 +15,6 @@ Template.type.helpers({
     let wholeTextObj = getRoomById(this._id);
     if(wholeTextObj){
       let restWords = wholeTextObj.text && wholeTextObj.text.split(' ');
-      console.log('active word from helper', restWords[0]);
-      passedWords.push(restWords[activeIndex]);
       return restWords[activeIndex];
     }
     return '';
@@ -31,11 +29,15 @@ Template.type.helpers({
   },
   allPlayer(){
     let wholeRoomObj = getRoomById(this._id);
-    allPlayers = wholeRoomObj && wholeRoomObj.members;
-    _.reverse(_.sortBy(allPlayers, function(o) { return o.progress; }));
+    let allPlayers = wholeRoomObj && wholeRoomObj.members;
+    allPlayers =  _.sortBy(allPlayers, ['name', 'progress']);
     return allPlayers;
+  },
+  isStarting(){
+    let wholeRoomObj = getRoomById(this._id);
+    let status = wholeRoomObj && wholeRoomObj.isStarting;
+    return status;
   }
-
 });
 
 Template.type.events({
@@ -48,11 +50,12 @@ Template.type.events({
 
     if(event.keyCode === 32){
       if(checkCompleteAWord(inputWord.trim(), restWords[activeIndex])){
+        // passed the active word to passedWords array
+        passedWords.push(restWords[activeIndex]);
+        // and get the new active word
         activeWord = getActiveWord(indexOfWord, restWords);
-        console.log('get active word:',activeWord);
         indexOfWord < restWords.length - 1 ? indexOfWord ++ : 0;
         $('#passed').html(passedWords.join(' '));
-        // passedWords.push(activeWord);
         $('#active').html(activeWord);
         $('#active').css('background-color','lightgreen')
         $('#rest').html(restWords.slice((passedWords.length + 1), restWords.length).join(' '));
@@ -61,7 +64,6 @@ Template.type.events({
         let progress = (wordsCounts / restWords.length) * 100;
         progress = parseFloat(Math.round(progress * 100) / 100).toFixed(2);
         Meteor.call('member.update',progress, Meteor.userId(), this._id);
-        console.log(activeIndex,'events');
         activeIndex++;
         $('#wordTypingField').val('');
       }
@@ -81,10 +83,9 @@ function checkCompleteAWord(inputWord, activeWord){
   changeBackColor(false);
   return false;
 }
-}
+};
 
 function checkCorrect(inputWord, WordToCompare){
-  console.log('checkCorrect: ', WordToCompare);
   let isCorrect = isCorrectWord(inputWord, WordToCompare);
   changeBackColor(isCorrect);
   return isCorrect;
@@ -114,6 +115,12 @@ function changeBackColor(isPassed){
 
 function getRoomById(id){
   return Rooms.findOne({_id:id});
+}
+
+function getText(roomId){
+  let room = Rooms.findOne({_id:roomId});
+  let text = room && room.text;
+  return text;
 }
 
 function getActiveWord(indexOfWord, restWords){

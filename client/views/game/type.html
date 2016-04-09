@@ -2,7 +2,7 @@
   <div class="row flow-text">
     {{#each allPlayer}}
     <div class="col s6 m3">
-      <div class="card-panel teal">
+      <div class="card-panel teal white-text">
         <span class="card-title">{{progress}}%</span>
         {{username}}
       </div>
@@ -10,18 +10,11 @@
     {{/each}}
   </div>
   <div class="flow-text card-panel hoverable" id="text">
-
-  <!-- {{text}} -->
     <span id="passed">{{passedWords}}</span>
     <span id="active">{{activeWord}}</span>
     <span id="rest">{{restWords}}</span>
-
   </div>
-  <input type="text" class="word" id="wordTypingField" autofocus />
-
-
-</template>
-
-<template name="progress">
-
+  {{#if isStarting}}
+    <input type="text" class="word" id="wordTypingField"/>
+  {{/if}}
 </template>

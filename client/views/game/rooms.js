@@ -9,6 +9,11 @@ Template.rooms.helpers({
   },
   showForm(){
     return Template.instance().showForm.get();
+  },
+  isStarting(){
+    let wholeRoomObj = getRoomById(this._id);
+    let status = wholeRoomObj && wholeRoomObj.isStarting;
+    return status;
   }
 });
 
@@ -23,27 +28,38 @@ Template.rooms.events({
     const target = event.target;
     const name = target[0].value;
 
-    // Insert a task into the collection
-    Meteor.call('rooms.insert', name, (err, result)=>{
-      if(!err){
-       Router.go('gameRoom', { _id: result });
-     }else{
-       console.log(err.reason);
-     }
+    if(Meteor.userId() && name){
+      // Insert a task into the collection
+      Meteor.call('rooms.insert', name, (err, result)=>{
+        if(!err){
+         Router.go('gameRoom', { _id: result });
+       }else{
+         console.log(err.reason);
+       }
 
-   });
+     });
 
-    // Clear form
-    target[0].value = '';
+      // Clear form
+      target[0].value = '';
+
+    }else{
+      alert('plz login and enter the room name');
+
+    }
 
   }
 });
 
 Template.room.events({
-  'click .room'(event, instance) {
+  'click .room'(event) {
     const roomId = event.currentTarget.id;
-    Meteor.call('rooms.update', roomId, Meteor.user(), (err, result)=>{
-      Router.go('gameRoom', { _id: roomId });
-    });
+    let isStarting = Rooms.findOne({_id: roomId}).isStarting;
+    if(isStarting){
+      alert('the room has already started!');
+    }else{
+      Meteor.call('rooms.update', roomId, (err, result)=>{
+        Router.go('gameRoom', { _id: roomId });
+      });
+    }
   },
 })
