@@ -23,17 +23,17 @@ Meteor.methods({
     }
     roomMembers.push(member);
 
-    // let text = HTTP.call('GET',"http://www.randomtext.me/api/gibberish/p-1/30-45");
+    let text = HTTP.call('GET',"http://www.randomtext.me/api/gibberish/p-1/2-5");
 
-    // let string =text.data.text_out.replace("<p>", "").replace("</p>", "");
-    let string = 'As you execute your project, you’ll want to regularly update your stakeholders. Beprepared to discuss the project’s progress, its challenges, and your plan of action forthose challenges. Be careful, though! Your manager may ask you to add deliverables to your final delivery. Your co-worker might realize that their responsibilities require more creep.';
+    let string =text.data.text_out.replace("<p>", "").replace("</p>", "");
+    // let string = 'As you execute your project, you will want to regularly update your stakeholders. Beprepared to discuss the project’s progress, its challenges, and your plan of action forthose challenges. Be careful, though! Your manager may ask you to add deliverables to your final delivery. Your co-worker might realize that their responsibilities require more creep.';
 
     let id = Rooms.insert({
       name:roomName,
       members:roomMembers,
       text: string,
       owner: Meteor.userId(),
-      username: Meteor.user().username,
+      winner:{},
       isStarting: false
     });
     return id;
@@ -64,7 +64,6 @@ Meteor.methods({
       return el.id === userId;
     });
     currentPlayer.progress = progress;
-
     Rooms.update(roomId, { $set: { members: Members } });
   },
   'member.remove'(roomId){
