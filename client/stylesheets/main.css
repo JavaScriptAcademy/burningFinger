@@ -10,3 +10,11 @@ input[type=text].word{
 #active{
   background-color: lightgreen;
 }
+
+.player-info {
+  font-size: 1.1rem;
+}
+
+.card-panel {
+  padding: 5px 10px;
+}

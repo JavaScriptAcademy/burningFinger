@@ -61,5 +61,5 @@ Template.room.events({
         Router.go('gameRoom', { _id: roomId });
       });
     }
-  },
-})
+  }
+});

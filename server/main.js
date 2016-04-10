@@ -1,103 +1,114 @@
-Meteor.publish('getAllRooms',()=>{
+Meteor.publish('getAllRooms', ()=> {
   return Rooms.find();
-})
+});
 
 Meteor.startup(() => {
 
 });
 
+function getInitialMember() {
+  return {
+    id: Meteor.userId(),
+    username: Meteor.user().username,
+    progress: 0,
+    finished: false,
+    speed: 0
+  };
+}
+
 Meteor.methods({
   'rooms.insert'(roomName){
     check(roomName, String);
 
-    //Make sure the user is logged in before inserting a task
-    if (! Meteor.userId()) {
+    if (!Meteor.userId()) {
       throw new Meteor.Error('not-authorized');
     }
 
     let roomMembers = [];
-    let member ={
-      id: Meteor.userId(),
-      username: Meteor.user().username,
-      progress: Meteor.user().progress,
-    }
+
+    let member = getInitialMember();
+
     roomMembers.push(member);
 
-    let text = HTTP.call('GET',"http://www.randomtext.me/api/gibberish/p-1/2-5");
+    let text = HTTP.call('GET', "http://www.randomtext.me/api/gibberish/p-1/45-50");
 
-    let string =text.data.text_out.replace("<p>", "").replace("</p>", "");
+    let string = text.data.text_out.replace("<p>", "").replace("</p>", "");
     // let string = 'As you execute your project, you will want to regularly update your stakeholders. Beprepared to discuss the project’s progress, its challenges, and your plan of action forthose challenges. Be careful, though! Your manager may ask you to add deliverables to your final delivery. Your co-worker might realize that their responsibilities require more creep.';
 
-    let id = Rooms.insert({
-      name:roomName,
-      members:roomMembers,
+    return Rooms.insert({
+      name: roomName,
+      members: roomMembers,
       text: string,
       owner: Meteor.userId(),
-      winner:{},
-      isStarting: false
+      isStarting: false,
+      startTime: null
     });
-    return id;
   },
+
   'rooms.update'(roomId){
-    let originMembers = Rooms.findOne({_id:roomId}).members;
+    let originMembers = Rooms.findOne({_id: roomId}).members;
 
     let exists = originMembers.findIndex(function (element) {
       return element.id === Meteor.userId();
     });
 
     // if current player is not exists in the room before.
-    if(exists === -1){
-      let member ={
-        id: Meteor.userId(),
-        username: Meteor.user().username,
-        progress: 0,
-      };
+    if (exists === -1) {
+      let member = getInitialMember();
       originMembers.push(member);
-      Rooms.update(roomId, { $set: { members: originMembers } });
+      Rooms.update(roomId, {$set: {members: originMembers}});
     }
 
   },
-  // update the progress of current player
-  'member.update'(progress, userId, roomId){
-    let Members = Rooms.findOne({_id:roomId}).members;
-    let currentPlayer = Members.find((el)=>{
+
+  'member.update'(progress, userId, roomId, finished){
+    let currentRoom = Rooms.findOne({_id: roomId});
+    let Members = currentRoom.members;
+    let currentPlayer = Members.find((el)=> {
       return el.id === userId;
     });
-    currentPlayer.progress = progress;
-    Rooms.update(roomId, { $set: { members: Members } });
-  },
-  'member.remove'(roomId){
-    let room = Rooms.findOne({_id:roomId});
 
-    let Members =room && room.members;
+    currentPlayer.progress = progress;
+    currentPlayer.finished = finished;
+    let timeSpend = new Date() - currentRoom.startTime;
+    currentPlayer.speed = currentRoom.text.length * 60000 / timeSpend;
+
+    Rooms.update(roomId, {$set: {members: Members}});
+  },
+
+  'member.remove'(roomId){
+    let room = Rooms.findOne({_id: roomId});
+
+    let Members = room && room.members;
     let owner = room && room.owner;
 
-    let memberIndex = Members.findIndex((element, index, array)=>{
+    let memberIndex = Members.findIndex((element, index, array)=> {
       return element.id === Meteor.userId();
     });
 
-    if(Members.length <= 1){
+    if (Members.length <= 1) {
       Rooms.remove(roomId);
-    }else{
+    } else {
 
-      if(Meteor.userId() === owner){
-        Rooms.update(roomId,{ $set: { owner: Members[1].id } });
+      if (Meteor.userId() === owner) {
+        Rooms.update(roomId, {$set: {owner: Members[1].id}});
       }
-      Members.splice(memberIndex,1);
-      Rooms.update(roomId,{ $set: { members: Members } });
+      Members.splice(memberIndex, 1);
+      Rooms.update(roomId, {$set: {members: Members}});
     }
   },
+
   'room.updateStatus'(roomId){
-    Rooms.update(roomId,{ $set:{ isStarting: true }});
+    Rooms.update(roomId, {$set: {isStarting: true, startTime: new Date() }});
   }
 
+});
 
-})
 
-
-Accounts.onCreateUser(function(options, user) {
+Accounts.onCreateUser(function (options, user) {
   user.progress = 0;
-  if (options.profile){
+
+  if (options.profile) {
     user.profile = options.profile;
   }
   return user;

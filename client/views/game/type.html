@@ -1,10 +1,15 @@
 <template name="type">
   <div class="row flow-text">
     {{#each allPlayer}}
-    <div class="col s6 m3">
-      <div class="card-panel teal white-text">
-        <span class="card-title">{{progress}}%</span>
-        {{username}}
+    <div class="col s6 m2">
+      <div class="card-panel teal white-text player-info">
+        <div>{{username}}</div>
+        <div>{{speed}} WPM</div>
+        {{#if finished}}
+          <div>Rank: {{rank}}</div>
+        {{else}}
+          <div>{{progress}}%</div>
+        {{/if}}
       </div>
     </div>
     {{/each}}
