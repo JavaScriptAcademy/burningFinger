@@ -1,0 +1,25 @@
+<template name="type">
+  <div class="row flow-text">
+    {{#each allPlayer}}
+    <div class="col s6 m2">
+      <div class="card-panel teal white-text player-info">
+        <div>{{username}}</div>
+        <div>{{speed}} WPM</div>
+        {{#if finished}}
+          <div>Rank: {{rank}}</div>
+        {{else}}
+          <div>{{progress}}%</div>
+        {{/if}}
+      </div>
+    </div>
+    {{/each}}
+  </div>
+  <div class="flow-text card-panel hoverable" id="text">
+    <span id="passed">{{passedWords}}</span>
+    <span id="active">{{activeWord}}</span>
+    <span id="rest">{{restWords}}</span>
+  </div>
+  {{#if isStarting}}
+    <input type="text" class="word" id="wordTypingField"/>
+  {{/if}}
+</template>

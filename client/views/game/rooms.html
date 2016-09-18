@@ -1,0 +1,49 @@
+<template name="rooms">
+  <div class="row roomList">
+    {{#each allRooms}}
+      {{> room}}
+    {{/each}}
+
+    <div class="col s12 m4" id="showNewRoomForm">
+      <div class="card-panel teal hoverable center-align">
+        <i class="material-icons large">playlist_add</i>
+      </div>
+    </div>
+
+  </div>
+  {{#if showForm}}
+    {{> addNewRoom}}
+  {{/if}}
+</template>
+
+<template name="addNewRoom">
+  <div class="row" id="newRoomForm">
+    <form class="col s12 card blue-grey darken-1">
+      <div class="row">
+        <div class="input-field col s6">
+          <input id="room_name" type="text" class="validate"  autocomplete="off">
+          <label for="room_name">Room Name</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s6">
+          <button class="btn">Create</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</template>
+
+<template name="room">
+  <div class="col s12 m4">
+    {{#if isStarting}}
+      <div class="card-panel red accent-1 center-align room" id="{{_id}}">
+        <p class="white-text">{{name}}</p>
+      </div>
+    {{else}}
+      <div class="card-panel teal hoverable center-align room" id="{{_id}}">
+        <p class="white-text">{{name}}</p>
+      </div>
+    {{/if}}}}
+  </div>
+</template>

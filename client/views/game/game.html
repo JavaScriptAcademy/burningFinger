@@ -1,0 +1,13 @@
+<template name="game">
+  {{> type}}
+  {{> action}}
+</template>
+
+
+
+<template name="action">
+  <button class="btn" id="quitBtn">quit</button>
+  {{#if isOwner}}
+    <button class="btn" id="startBtn">start</button>
+  {{/if}}
+</template>

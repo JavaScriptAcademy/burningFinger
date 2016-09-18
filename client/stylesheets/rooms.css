@@ -1,0 +1,22 @@
+.roomList>div:hover{
+  cursor: pointer;
+}
+
+.roomList>div{
+  color: white;
+}
+#login-buttons{
+  min-width: 100px;
+  background-color: #ee6e73;
+  text-align: center;
+  line-height: 40px;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 2px;
+}
+
+#login-buttons a{
+  text-decoration: none;
+}
+a{
+  color: white;
+}
