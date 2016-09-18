@@ -5,6 +5,10 @@
 .roomList>div{
   color: white;
 }
+
+#newRoomForm input{
+  color: white;
+}
 #login-buttons{
   min-width: 100px;
   background-color: #ee6e73;
